@@ -13,7 +13,7 @@ task.wait(5)
 
 local t = 0
 while t <= 1 do
-    t += RunService.Heartbeat:Wait()
-    duck.CFrame = CFrame.new(duck.Position) * Quaternion.clampedSlerp(q0, q1, t):toCFrame()
+    t += RunService.Stepped:Wait()
+    duck.CFrame = CFrame.new(duck.Position) * Quaternion.slerp(q0, q1, 1 - (1 - t)^5):toCFrame()
 end
 duck.CFrame = CFrame.new(duck.Position) * Quaternion.clampedSlerp(q0, q1, 1):toCFrame()

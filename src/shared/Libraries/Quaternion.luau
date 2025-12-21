@@ -143,7 +143,8 @@ Quaternion.__sub = function(quaternion0 : Quaternion, quaternion1 : Quaternion) 
 end
 
 Quaternion.__mul = function(q : Quaternion | number | CFrame, s : number | Quaternion | CFrame) : Quaternion | CFrame
-    if typeof(q) == typeof(s) and typeof(s) == "table" then
+    -- Quaternion * quaternion multiplication
+    if typeof(q) == "table" and typeof(s) == "table" then
         local quaternion0 : Quaternion = q :: Quaternion
         local quaternion1 : Quaternion = s :: Quaternion
 
@@ -158,16 +159,27 @@ Quaternion.__mul = function(q : Quaternion | number | CFrame, s : number | Quate
     local quaternion : Quaternion = (type(s) ~= "table" and q or s) :: Quaternion
     local multiplier : CFrame | number = (quaternion == q and s or q) :: CFrame | number
 
+    -- Scala * quaternion multiplication
     if type(multiplier) == "number" then
         return Quaternion.new(quaternion.w * multiplier, quaternion.x * multiplier, quaternion.y * multiplier, quaternion.z * multiplier)
     end
 
+    -- CFrame * quaternion multiplication
     return multiplier * quaternion:toCFrame()
 end
 
 Quaternion.__div = function(quaternion : Quaternion, scalar : number) : Quaternion
     assert(scalar ~= 0, "Cannot divide a quaternion by 0!")
     return Quaternion.new(quaternion.w / scalar, quaternion.x / scalar, quaternion.y / scalar, quaternion.z / scalar)
+end
+
+Quaternion.__pow = function(quaternion : Quaternion, power : number) : Quaternion
+    local angle = quaternion:getAngle()
+    local axis = quaternion:getAxisAsVector3()
+
+    angle *= power
+
+    return Quaternion.fromAxisAngle(axis, angle)
 end
 
 Quaternion.__tostring = function(quaternion : Quaternion) : string
@@ -222,16 +234,7 @@ end
     @return Quaternion interpolated
 ]]
 function Quaternion.slerp(quaternion1 : Quaternion, quaternion2 : Quaternion, t : number) : Quaternion
-    local theta1 = quaternion1:getAngle()
-    local theta2 = quaternion2:getAngle()
-
-    local axis1 = quaternion1:getAxisAsVector3()
-    local axis2 = quaternion2:getAxisAsVector3()
-
-    local theta = Math.lerp(theta1, theta2, t)
-    local axis = axis1:Lerp(axis2, t)
-
-    return Quaternion.fromAxisAngle(axis, theta)
+    return quaternion1 * (quaternion2 :: Quaternion * quaternion1:inverse()) ^ t
 end
 
 --[[
@@ -308,7 +311,7 @@ end
     @return Quaternion's axis rotation as a Vector3
 ]]
 function Quaternion:getAxisAsVector3() : Vector3
-    return Vector3.new(self.x, self.y, self.z)
+    return Vector3.new(self.x, self.y, self.z).Unit
 end
 
 
