@@ -116,13 +116,13 @@ function Stack:isEmpty() : boolean
     return self:size() == 0
 end
 
+
 --[[
     Clears all the elements in the stack
 ]]
 function Stack:clear()
     table.clear(self._table)
 end
-
 
 
 --[[

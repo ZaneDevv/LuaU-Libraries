@@ -20,7 +20,7 @@ local UserInputService = game:GetService("UserInputService")
 -- Variables
 -------------------------------------
 
-local ShiftLock = {}
+local ShiftLockService = {}
 
 -------------------------------------
 -- Methods
@@ -41,7 +41,7 @@ end
 	Activates the "forced" shift lock.
 	@param humanoid: Player's humanoid affected.
 ]]
-function ShiftLock.activate(humanoid: Humanoid)
+function ShiftLockService.activate(humanoid: Humanoid)
     assert(RunService:IsClient(), "This method can only be ran on client-side!")
 
 	local rootPart : Part = humanoid.RootPart :: Part
@@ -65,7 +65,7 @@ end
 	Desactivates the "forced" shift lock.
 	@param humanoid: Player"s humanoid affected.
 ]]
-function ShiftLock.desactivate(humanoid: Humanoid)
+function ShiftLockService.desactivate(humanoid: Humanoid)
     assert(RunService:IsClient(), "This method can only be ran on client-side!")
 
 	UserInputService.MouseBehavior = Enum.MouseBehavior.Default
@@ -78,4 +78,4 @@ end
 
 
 
-return ShiftLock
+return ShiftLockService
