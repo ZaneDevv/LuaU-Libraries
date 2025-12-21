@@ -56,8 +56,8 @@ end
 
 --[[
     Creates a new quaternion with the given angle and rotation axis
-    @param angle Rotation angle
     @param axis Rotation axis
+    @param angle Rotation angle
     @return The new quaternion
 ]]
 function Quaternion.fromAxisAngle(axis : Vector3, angle : number) : Quaternion
@@ -134,8 +134,28 @@ end
 
 Quaternion.__index = Quaternion
 
+Quaternion.__add = function(quaternion0 : Quaternion, quaternion1 : Quaternion) : Quaternion
+    return Quaternion.new(quaternion0.w + quaternion1.w, quaternion0.x + quaternion1.x, quaternion0.y + quaternion1.y, quaternion0.z + quaternion1.z)
+end
+
+Quaternion.__sub = function(quaternion0 : Quaternion, quaternion1 : Quaternion) : Quaternion
+    return Quaternion.new(quaternion0.w - quaternion1.w, quaternion0.x - quaternion1.x, quaternion0.y - quaternion1.y, quaternion0.z - quaternion1.z)
+end
+
 Quaternion.__mul = function(q : Quaternion | number | CFrame, s : number | Quaternion | CFrame) : Quaternion | CFrame
-    local quaternion : Quaternion = ((type(s) == "number" or typeof(s) == "CFrame") and q or s) :: Quaternion
+    if typeof(q) == typeof(s) and typeof(s) == "table" then
+        local quaternion0 : Quaternion = q :: Quaternion
+        local quaternion1 : Quaternion = s :: Quaternion
+
+        return Quaternion.new(
+            quaternion0.w * quaternion1.w - quaternion0.x * quaternion1.x - quaternion0.y * quaternion1.y - quaternion0.z * quaternion1.z,
+            quaternion0.w * quaternion1.x + quaternion0.y * quaternion1.z - quaternion0.z * quaternion1.y + quaternion0.x * quaternion1.w,
+            quaternion0.w * quaternion1.y - quaternion0.x * quaternion1.z + quaternion0.z * quaternion1.x + quaternion0.y * quaternion1.w,
+            quaternion0.w * quaternion1.z + quaternion0.x * quaternion1.y - quaternion0.y * quaternion1.x + quaternion0.z * quaternion1.w
+        )
+    end
+
+    local quaternion : Quaternion = (type(s) ~= "table" and q or s) :: Quaternion
     local multiplier : CFrame | number = (quaternion == q and s or q) :: CFrame | number
 
     if type(multiplier) == "number" then
