@@ -170,5 +170,16 @@ function Queue:toTable()
 end
 
 
+--[[
+    Runs the given method for every element in the current queue
+    @param method Method to run
+]]
+function Queue:forEach(method : (any) -> ()) : ()
+    for _, item in ipairs(self._table) do
+        method(item)
+    end
+end
+
+
 
 return Queue

@@ -173,5 +173,16 @@ function Stack:toTable()
 end
 
 
+--[[
+    Runs the given method for every element in the current stack
+    @param method Method to run
+]]
+function Stack:forEach(method : (any) -> ()) : ()
+    for _, item in ipairs(self._table) do
+        method(item)
+    end
+end
+
+
 
 return Stack

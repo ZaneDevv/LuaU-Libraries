@@ -3,6 +3,27 @@
 --@date 2025/12/20
 
 -------------------------------------
+-- Constants
+-------------------------------------
+
+local SET_COMMAS_TO_NUMBER_REGEX_DETECTION = "^(-?%d+)(%d%d%d)"
+local SET_COMMAS_TO_NUMBER_REGEX = '%1,%2'
+
+local ABBREVIATIONS : {[string] : number} = {
+	K = 1e3,
+	M = 1e6,
+	B = 1e9,
+	T = 1e12,
+	Qa = 1e15,
+	Qi = 1e18,
+	Sx = 1e21,
+	Sp = 1e24,
+	Oc = 1e27,
+	No = 1e30,
+	Dc = 1e33,
+}
+
+-------------------------------------
 -- Variables
 -------------------------------------
 
@@ -47,6 +68,28 @@ end
 
 
 --[[
+    Checks if the given number is within the given range
+    @param x Number to check
+    @param min Minimum number in the range
+    @param max Maximum number in the range
+    @return True if the given number is within the given range, false otherwise
+]]
+function Math.isNumberInRange(x : number, min : number, max : number) : boolean
+    return x >= min and x <= max
+end
+
+
+--[[
+    Checks if the given number is even
+    @param x Number to check
+    @return True if the given number is even, false otherwise
+]]
+function Math.isEven(x : number) : boolean
+    return bit32.band(x, 1) == 0
+end
+
+
+--[[
     Sets the commas to the given number
     @param Number to set commas
     @return Number with all the needed commas set
@@ -56,7 +99,7 @@ function Math.setCommas(x : number) : string
     local k = 0
 
     while true do  
-        formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", '%1,%2')
+        formatted, k = string.gsub(formatted, SET_COMMAS_TO_NUMBER_REGEX_DETECTION, SET_COMMAS_TO_NUMBER_REGEX)
         
         if k == 0 then
             break
@@ -68,14 +111,34 @@ end
 
 
 --[[
-    Checks if the given number is within the given range
-    @param x Number to check
-    @param min Minimum number in the range
-    @param max Maximum number in the range
-    @return True if the given number is within the given range, false otherwise
+    Abbreviates the given number
+    @param x Number to abbreviate
+    @return The number abbreviated
 ]]
-function Math.isNumberInRange(x : number, min : number, max : number) : boolean
-    return x >= min and x <= max
+function Math.Abbreviate(x : number) : string
+	if x >= math.huge then
+		return "∞"
+	end
+	
+	if x < 1e3 then
+		return tostring(x)
+	end
+
+	local chosenAbbreviationSubfix: string = ""
+	local chosenAbbreviationMinNumber: number = 0
+
+	for subfix : string, minToAbbreviate : number in ABBREVIATIONS do
+		if minToAbbreviate > x or minToAbbreviate < chosenAbbreviationMinNumber then
+			continue
+		end
+
+		chosenAbbreviationSubfix = subfix;
+		chosenAbbreviationMinNumber = minToAbbreviate;
+	end
+
+	local prefixNumber: number = math.floor(x / chosenAbbreviationMinNumber * 10) / 10
+	
+	return `{tostring(prefixNumber)} {chosenAbbreviationSubfix}+`
 end
 
 
