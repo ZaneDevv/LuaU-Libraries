@@ -67,4 +67,16 @@ function Math.setCommas(x : number) : string
 end
 
 
+--[[
+    Checks if the given number is within the given range
+    @param x Number to check
+    @param min Minimum number in the range
+    @param max Maximum number in the range
+    @return True if the given number is within the given range, false otherwise
+]]
+function Math.isNumberInRange(x : number, min : number, max : number) : boolean
+    return x >= min and x <= max
+end
+
+
 return Math

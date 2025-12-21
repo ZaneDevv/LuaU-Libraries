@@ -3,6 +3,12 @@
 --@date 2025/12/20
 
 -------------------------------------
+-- Services
+-------------------------------------
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+-------------------------------------
 -- Class
 -------------------------------------
 
@@ -12,11 +18,20 @@ local AABB = {}
 -- Types
 -------------------------------------
 
+-- AABB bounds
+export type BoundAABB = {min : number, max : number}
+
 -- AABB class attributes
-type self = {_minX: number, _maxX: number, _minY: number, _maxY: number, _minZ: number?, _maxZ: number?}
+export type self = {bounds : {BoundAABB}}
 
 -- AABB instance type
 export type AABB = typeof(setmetatable({} :: self, AABB))
+
+-------------------------------------
+-- Modules
+-------------------------------------
+
+local Math = require(ReplicatedStorage.Shared.Libraries.Math)
 
 -------------------------------------
 -- Constructor
@@ -24,34 +39,12 @@ export type AABB = typeof(setmetatable({} :: self, AABB))
 
 --[[
 	Creates a new AABB instance
-	@param minX Minimum x coordinate
-	@param maxX Maximum x coordinate
-	@param minY Minimum y coordinate
-	@param maxY Maximum y coordinate
-	@param minZ Minimum z coordinate
-	@param maxZ Maximum z coordinate
+	@param essentialBound First AABB bounds
+	@param ... AABB bounds
     @return The new AABB instance
 ]]
-function AABB.new(minX : number, maxX : number, minY : number, maxY : number, minZ : number?, maxZ : number?) : AABB
-	assert((minZ == nil and maxZ == nil) or (minZ ~= nil and maxZ ~= nil), "Axis Z must be fully defined or fully omitted")
-	assert(minX <= maxX, "minX must be <= maxX")
-	assert(minY <= maxY, "minY must be <= maxY")
-
-	if minZ ~= nil and maxZ ~= nil then
-		assert(minZ <= maxZ, "minZ must be <= maxZ")
-	end
-
-	return setmetatable(
-        {
-            _minX = minX,
-            _maxX = maxX,
-            _minY = minY,
-            _maxY = maxY,
-            _minZ = minZ,
-            _maxZ = maxZ
-        },
-        AABB
-    )
+function AABB.new(essentialBound : BoundAABB, ... : BoundAABB) : AABB
+	return setmetatable({bounds = {essentialBound, ...}}, AABB) :: AABB
 end
 
 -------------------------------------
@@ -59,20 +52,49 @@ end
 -------------------------------------
 
 AABB.__index = AABB
-function AABB:__tostring() : string
-	if self._minZ ~= nil and self._maxZ ~= nil then
-		return string.format("AABB3D(min=(%f,%f,%f), max=(%f,%f,%f))", self._minX, self._minY, self._minZ, self._maxX, self._maxY, self._maxZ)
+function AABB:__tostring(aabb : AABB) : string
+	local result = "AABB(\n"
+
+	for _, bound : BoundAABB in ipairs(aabb.bounds) do
+		result ..= `min: {bound.min}, max: {bound.max}\n`
 	end
 
-	return string.format("AABB2D(min=(%f,%f), max=(%f,%f))", self._minX, self._minY, self._maxX, self._maxY)
+	result ..= ")"
+
+	return result
 end
 
 -------------------------------------
 -- Methods
 -------------------------------------
 
-function AABB:hasThreeDimensions() : boolean
-	return self._minZ ~= nil and self._maxZ ~= nil
+--[[
+	Checks if the two given bounds are overlapping
+	@param bound1 First bounds to check
+	@param bound2 Other bounds to check
+	@return True if they are overlapping, false otherwise
+]]
+local function areBoundsOverlapping(bound1 : BoundAABB, bound2 : BoundAABB) : boolean
+	return Math.isNumberInRange(bound1.min, bound2.min, bound2.max)
+end
+
+
+--[[
+	Obtains the amount of dimensions the current AABB instance has
+	@return The current AABB instance's dimensions
+]]
+function AABB:getDimensionsAmount() : number
+	return #self.bounds
+end
+
+
+--[[
+	Checks if the current and the given AABB instances have the same amount of dimensions
+	@param aabb The other AABB instance to check
+	@return True if both AABB instances ahve the same dimensions, false otherwise
+]]
+function AABB:hasSameDimensions(aabb : AABB) : boolean
+	return self:getDimensionsAmount() == aabb:getDimensionsAmount()
 end
 
 
@@ -83,31 +105,35 @@ end
 	@error If AABB is 3D, the given point must be a Vector3
 ]]
 function AABB:isPointOver(point : Vector3 | Vector2) : boolean
-	if point.X < self._minX or point.X > self._maxX then
-		return false
+	local aabbDimensions = self:getDimensionsAmount()
+	assert(typeof(point) == `Vector{aabbDimensions}`, "The point and the AABB must have the same amount of dimensions!")
+
+	local result = Math.isNumberInRange(point.X, self.bounds[1].min, self.bounds[1].max) and Math.isNumberInRange(point.Y, self.bounds[2].min, self.bounds[2].max)
+
+	if aabbDimensions == 3 then
+		result = result and Math.isNumberInRange((point :: Vector3).Z, self.bounds[2].min, self.bounds[2].max)
 	end
 
-	if point.Y < self._minY or point.Y > self._maxY then
-		return false
-	end
-
-	if self:hasThreeDimensions() then
-        assert(typeof(point) == "Vector3", "Vector3 expected!")
-
-		if point.Z < self._minZ or point.Z > self._maxZ then
-			return false
-		end
-	end
-
-	return true
+	return result
 end
 
 
-
+--[[
+	Checks if the current AABB instance and the given one are overlapping
+	@param aabb The other AABB instance to check
+	@return True if they are overlapping, false otherwise
+]]
 function AABB:isAABBOver(aabb : AABB) : boolean
-	assert(self:hasThreeDimensions() == aabb:hasThreeDimensions(), "Both AABB instances must have the same amount of dimensions!")
+	assert(self:hasSameDimensions(aabb), "Both AABB instances must have the same amount of dimensions!")
 
-	-- TODO this
+	for i : number = 1, aabb:getDimensionsAmount() do
+		if areBoundsOverlapping(self.bounds[i], aabb.bounds[i]) then
+			continue
+		end
+
+		return false
+	end
+	
 	return true
 end
 

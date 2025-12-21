@@ -74,8 +74,8 @@ function HoverService.connect(interface : GuiBase2d, hoverMethod : (() -> ())?, 
 
 
     local aabb : AABB.AABB = AABB.new(
-        interface.AbsolutePosition.X, interface.AbsolutePosition.X + interface.AbsoluteSize.X,
-        interface.AbsolutePosition.Y, interface.AbsolutePosition.Y + interface.AbsoluteSize.Y
+        {min = interface.AbsolutePosition.X, max = interface.AbsolutePosition.X + interface.AbsoluteSize.X},
+        {min = interface.AbsolutePosition.Y, max = interface.AbsolutePosition.Y + interface.AbsoluteSize.Y}
     )
 
     noButtonConnectionsAmount += 1
