@@ -54,6 +54,22 @@ function Quaternion.new(w : number, x : number, y : number, z : number) : Quater
 end
 
 
+--[[
+    Creates a new quaternion with the given angle and rotation axis
+    @param angle Rotation angle
+    @param axis Rotation axis
+    @return The new quaternion
+]]
+function Quaternion.fromAxisAngle(axis : Vector3, angle : number) : Quaternion
+    angle *= 0.5
+
+    local cos = math.cos(angle)
+    local sin = math.sin(angle)
+
+    return Quaternion.new(cos, sin * axis.X, sin * axis.Y, sin * axis.Z)
+end
+
+
 -- Offitial method
 --[[
     Creates a new quaternion with the given CFrame
@@ -149,7 +165,7 @@ end
     @param t Progress
     @return Quaternion lerped between quaternion1 and quaternion2
 ]]
-function Quaternion.Lerp(quaternion1: Quaternion, quaternion2: Quaternion, t: number): Quaternion
+function Quaternion.lerp(quaternion1 : Quaternion, quaternion2 : Quaternion, t : number) : Quaternion
 	return Quaternion.new(
 		Math.lerp(quaternion1.w, quaternion2.w, t),
 		Math.lerp(quaternion1.x, quaternion2.x, t),
@@ -166,7 +182,7 @@ end
     @param t Progress 0 <= t <= 1
     @return Quaternion lerped between quaternion1 and quaternion2
 ]]
-function Quaternion.ClampedLerp(quaternion1: Quaternion, quaternion2: Quaternion, t: number): Quaternion
+function Quaternion.clampedLerp(quaternion1 : Quaternion, quaternion2 : Quaternion, t : number) : Quaternion
     t = Math.clamp01(t)
 
 	return Quaternion.new(
@@ -175,6 +191,38 @@ function Quaternion.ClampedLerp(quaternion1: Quaternion, quaternion2: Quaternion
 		Math.lerp(quaternion1.y, quaternion2.y, t),
 		Math.lerp(quaternion1.z, quaternion2.z, t)
 	)
+end
+
+
+--[[
+    Interpolates the two given quaternions
+    @param quaternion1 Quaternion to start from
+    @param quaternion2 Quaternion to reach
+    @param t Progress
+    @return Quaternion interpolated
+]]
+function Quaternion.slerp(quaternion1 : Quaternion, quaternion2 : Quaternion, t : number) : Quaternion
+    local theta1 = quaternion1:getAngle()
+    local theta2 = quaternion2:getAngle()
+
+    local axis1 = quaternion1:getAxisAsVector3()
+    local axis2 = quaternion2:getAxisAsVector3()
+
+    local theta = Math.lerp(theta1, theta2, t)
+    local axis = axis1:Lerp(axis2, t)
+
+    return Quaternion.fromAxisAngle(axis, theta)
+end
+
+--[[
+    Interpolates the two given quaternions
+    @param quaternion1 Quaternion to start from
+    @param quaternion2 Quaternion to reach
+    @param t Progress 0 <= t <= 1
+    @return Quaternion interpolated
+]]
+function Quaternion.clampedSlerp(quaternion1 : Quaternion, quaternion2 : Quaternion, t : number) : Quaternion
+    return Quaternion.slerp(quaternion1, quaternion2, Math.clamp01(t))
 end
 
 -------------------------------------
@@ -223,6 +271,33 @@ end
 ]]
 function Quaternion:toCFrame() : CFrame
     return CFrame.new(0, 0, 0, self.x, self.y, self.z, self.w)
+end
+
+
+--[[
+    Obtains the current quaternion's axis rotation as a vector
+    @return Quaternion's axis rotation as a vector
+]]
+function Quaternion:getAxis() : vector
+    return vector.create(self.x, self.y, self.z)
+end
+
+
+--[[
+    Obtains the current quaternion's axis rotation as a Vector3
+    @return Quaternion's axis rotation as a Vector3
+]]
+function Quaternion:getAxisAsVector3() : Vector3
+    return Vector3.new(self.x, self.y, self.z)
+end
+
+
+--[[
+    Obtains the current quaternion's angle rotation
+    @return Quaternion's angle rotation
+]]
+function Quaternion:getAngle() : number
+    return 2 * math.acos(self.w)
 end
 
 
