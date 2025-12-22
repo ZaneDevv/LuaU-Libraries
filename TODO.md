@@ -9,3 +9,4 @@
 * BetterDataStoreService
 * BetterChatService
 * ObjectPoolingService
+* GizmosService

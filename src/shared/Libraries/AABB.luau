@@ -47,6 +47,19 @@ function AABB.new(essentialBound : BoundAABB, ... : BoundAABB) : AABB
 	return setmetatable({bounds = {essentialBound, ...}}, AABB) :: AABB
 end
 
+
+--[[
+	Creates a new AABB instances according to the given interface
+	@param iterface Interface to create the AABB object from
+	@return The new AABB object
+]]
+function AABB.fromGui(interface : GuiBase2d) : AABB
+	return AABB.new(
+        {min = interface.AbsolutePosition.X, max = interface.AbsolutePosition.X + interface.AbsoluteSize.X},
+        {min = interface.AbsolutePosition.Y, max = interface.AbsolutePosition.Y + interface.AbsoluteSize.Y}
+    )
+end
+
 -------------------------------------
 -- Metamethods
 -------------------------------------
