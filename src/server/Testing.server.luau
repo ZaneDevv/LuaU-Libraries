@@ -1,19 +1,19 @@
-local RunService = game:GetService("RunService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ObjectPooling = require(ReplicatedStorage:WaitForChild("Shared").Libraries.ObjectPooling)
 
-local Shared = ReplicatedStorage:WaitForChild("Shared")
-local Quaternion = require(Shared.Libraries.Quaternion)
 
-local duck = workspace:WaitForChild("Duck")
+local duck = ReplicatedStorage:WaitForChild("Duck")
+duck.CanCollide = false
+duck.Anchored = true
+duck.Size /= 10
 
-local q0 = Quaternion.fromAxisAngle(Vector3.yAxis, 0)
-local q1 = q0 * Quaternion.fromEulerAnglesXYZ(math.pi, 0, 0)
+local objects = ObjectPooling.new(duck)
 
-task.wait(5)
 
-local t = 0
-while t <= 1 do
-    t += RunService.Heartbeat:Wait()
-    duck.CFrame = CFrame.new(duck.Position) * Quaternion.slerp(q0, q1, 1 - (1 - t)^5):toCFrame()
+task.wait(3)
+while true do
+    local newDuck = objects:spawn(2)
+    newDuck.Position = vector.create(math.random(-10, 10), 5, 0)
+
+    task.wait(0.3)
 end
-duck.CFrame = CFrame.new(duck.Position) * Quaternion.clampedSlerp(q0, q1, 1):toCFrame()

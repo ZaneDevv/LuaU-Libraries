@@ -8,13 +8,17 @@ At the moment, it counts with:
 * Data structures
     * Stack
     * Queue
+    * Set
 * Services
     * HoverService
     * ShiftLockService
+    * SoundService
 * Libraries
     * Quaternion
     * Math
     * AABB
+    * Color
+    * ObjectPooling
 
 Even though most of them are not even finished yet, it is a good first approach to those methods.
 
