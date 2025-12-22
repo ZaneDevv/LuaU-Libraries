@@ -41,13 +41,13 @@ local Math = require(ReplicatedStorage.Shared.Libraries.Math)
     @param y Y-coordinate
     @param z Z-coordinate
 ]]
-function Quaternion.new(w : number, x : number, y : number, z : number) : Quaternion
+function Quaternion.new(w : number?, x : number?, y : number?, z : number?) : Quaternion
     return setmetatable(
         {
-            w = w,
-            x = x,
-            y = y,
-            z = z
+            w = w or 0,
+            x = x or 0,
+            y = y or 0,
+            z = z or 0
         },
         Quaternion
     ) :: Quaternion
@@ -61,12 +61,42 @@ end
     @return The new quaternion
 ]]
 function Quaternion.fromAxisAngle(axis : Vector3, angle : number) : Quaternion
+    if angle == 0 then
+        return Quaternion.identity
+    end
+
     angle *= 0.5
 
     local cos = math.cos(angle)
     local sin = math.sin(angle)
 
     return Quaternion.new(cos, sin * axis.X, sin * axis.Y, sin * axis.Z)
+end
+
+
+--[[
+    Creates a new quaternion with the angles x, y and z
+    @param x Rotation on the x-axis
+    @param y Rotation on the y-axis
+    @param z Rotation on the z-axis
+    @return Quaternion rotated x on the x-axis, y on the y-axis and z on the z-axis
+]]
+function Quaternion.fromEulerAnglesXYZ(x : number?, y : number?, z : number?) : Quaternion
+    if x == y and y == z and z == 0 then
+        return Quaternion.identity
+    end
+
+    return Quaternion.fromAxisAngle(Vector3.xAxis, x or 0) * Quaternion.fromAxisAngle(Vector3.yAxis, y or 0) * Quaternion.fromAxisAngle(Vector3.zAxis, z or 0)
+end
+
+
+--[[
+    Clones the given quaternion
+    @param quaternion Quaternion to clone
+    @return Cloned quaternion
+]]
+function Quaternion.clone(quaternion : Quaternion)
+    return Quaternion.new(quaternion.w, quaternion.x, quaternion.y, quaternion.z)
 end
 
 
@@ -129,6 +159,12 @@ function Quaternion.fromCFrame(cframe: CFrame) : Quaternion
 end
 
 -------------------------------------
+-- Static constants
+-------------------------------------
+
+Quaternion.identity = Quaternion.new(1, 0, 0, 0)
+
+-------------------------------------
 -- Metamethods
 -------------------------------------
 
@@ -142,7 +178,7 @@ Quaternion.__sub = function(quaternion0 : Quaternion, quaternion1 : Quaternion) 
     return Quaternion.new(quaternion0.w - quaternion1.w, quaternion0.x - quaternion1.x, quaternion0.y - quaternion1.y, quaternion0.z - quaternion1.z)
 end
 
-Quaternion.__mul = function(q : Quaternion | number | CFrame, s : number | Quaternion | CFrame) : Quaternion | CFrame
+Quaternion.__mul = function(q : number | Quaternion, s : number | Quaternion) : Quaternion
     -- Quaternion * quaternion multiplication
     if typeof(q) == "table" and typeof(s) == "table" then
         local quaternion0 : Quaternion = q :: Quaternion
@@ -156,21 +192,27 @@ Quaternion.__mul = function(q : Quaternion | number | CFrame, s : number | Quate
         )
     end
 
-    local quaternion : Quaternion = (type(s) ~= "table" and q or s) :: Quaternion
-    local multiplier : CFrame | number = (quaternion == q and s or q) :: CFrame | number
-
-    -- Scala * quaternion multiplication
-    if type(multiplier) == "number" then
-        return Quaternion.new(quaternion.w * multiplier, quaternion.x * multiplier, quaternion.y * multiplier, quaternion.z * multiplier)
+    -- Quaternion * scalar
+    if type(q) == "table" and type(s) == "number" then
+        return Quaternion.new(q.w * s, q.x * s, q.y * s, q.z * s)
     end
 
-    -- CFrame * quaternion multiplication
-    return multiplier * quaternion:toCFrame()
+    -- Scalar * quaternion
+    if type(q) == "number" and type(s) == "table" then
+        return Quaternion.new(s.w * q, s.x * q, s.y * q, s.z * q)
+    end
+
+    error("Invalid operation!")
 end
 
 Quaternion.__div = function(quaternion : Quaternion, scalar : number) : Quaternion
     assert(scalar ~= 0, "Cannot divide a quaternion by 0!")
     return Quaternion.new(quaternion.w / scalar, quaternion.x / scalar, quaternion.y / scalar, quaternion.z / scalar)
+end
+
+Quaternion.__idiv = function(quaternion : Quaternion, scalar : number) : Quaternion
+    assert(scalar ~= 0, "Cannot divide a quaternion by 0!")
+    return Quaternion.new(quaternion.w // scalar, quaternion.x // scalar, quaternion.y // scalar, quaternion.z // scalar)
 end
 
 Quaternion.__pow = function(quaternion : Quaternion, power : number) : Quaternion
@@ -180,6 +222,22 @@ Quaternion.__pow = function(quaternion : Quaternion, power : number) : Quaternio
     angle *= power
 
     return Quaternion.fromAxisAngle(axis, angle)
+end
+
+Quaternion.__unm = function(quaternion : Quaternion) : Quaternion
+    return (quaternion * -1) :: Quaternion
+end
+
+Quaternion.__eq = function(quaternion0 : Quaternion, quaternion1 : Quaternion) : boolean
+    return quaternion0.w == quaternion1.w and quaternion0.x == quaternion1.x and quaternion0.y == quaternion1.y and quaternion0.z == quaternion1.z
+end
+
+Quaternion.__lt = function(quaternion0 : Quaternion, quaternion1 : Quaternion) : boolean
+    return quaternion0:magnitude() < quaternion1:magnitude()
+end
+
+Quaternion.__le = function(quaternion0 : Quaternion, quaternion1 : Quaternion) : boolean
+    return quaternion0:magnitude() <= quaternion1:magnitude()
 end
 
 Quaternion.__tostring = function(quaternion : Quaternion) : string
@@ -234,7 +292,11 @@ end
     @return Quaternion interpolated
 ]]
 function Quaternion.slerp(quaternion1 : Quaternion, quaternion2 : Quaternion, t : number) : Quaternion
-    return quaternion1 * (quaternion2 :: Quaternion * quaternion1:inverse()) ^ t
+    if quaternion1:dot(quaternion2) < 0 then
+        quaternion2 *= -1
+    end
+
+    return quaternion1 * (quaternion2 * quaternion1:inverse()) ^ t
 end
 
 --[[
@@ -271,11 +333,30 @@ end
 
 
 --[[
+    Computes the dot product between the current quaternion and the given one
+    @param other The other quaternion to compute the dot product with
+    @return The dot product of the current quaterniona and the given one. q · p
+]]
+function Quaternion:dot(other : Quaternion) : number
+    return self.w :: number * other.w + self.x :: number * other.x + self.y :: number * other.y + self.z :: number * other.z
+end
+
+
+--[[
+    Computes the squared magnitude of the current quaternion
+    @return The current quaternion's squared magnitude
+]]
+function Quaternion:squaredMagnitude() : number
+    return self:dot(self)
+end
+
+
+--[[
     Computes the magnitude of the current quaternion
     @return The current quaternion's magnitude
 ]]
 function Quaternion:magnitude() : number
-    return ((self.w :: number) * self.w + (self.x :: number) * self.x + (self.y :: number) * self.y + (self.z :: number) * self.z) ^ 0.5
+    return (self:squaredMagnitude()) ^ 0.5
 end
 
 
@@ -298,17 +379,17 @@ end
 
 
 --[[
-    Obtains the current quaternion's axis rotation as a vector
-    @return Quaternion's axis rotation as a vector
+    Obtains the current quaternion's axis rotation as a normalizated vector
+    @return Quaternion's axis rotation as a normalizated vector
 ]]
 function Quaternion:getAxis() : vector
-    return vector.create(self.x, self.y, self.z)
+    return vector.normalize(vector.create(self.x, self.y, self.z))
 end
 
 
 --[[
-    Obtains the current quaternion's axis rotation as a Vector3
-    @return Quaternion's axis rotation as a Vector3
+    Obtains the current quaternion's axis rotation as a normalizated Vector3
+    @return Quaternion's axis rotation as a normalizated Vector3
 ]]
 function Quaternion:getAxisAsVector3() : Vector3
     return Vector3.new(self.x, self.y, self.z).Unit
