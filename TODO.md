@@ -8,5 +8,4 @@
 * BetterMarketplaceService
 * BetterDataStoreService
 * BetterChatService
-* ObjectPoolingService
 * GizmosService

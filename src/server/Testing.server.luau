@@ -7,10 +7,12 @@ duck.CanCollide = false
 duck.Anchored = true
 duck.Size /= 10
 
-local objects = ObjectPooling.new(duck)
+local objects = ObjectPooling.new(duck, 20)
 
 
-task.wait(3)
+task.wait(10)
+print("AAAAAAA")
+
 while true do
     local newDuck = objects:spawn(2)
     newDuck.Position = vector.create(math.random(-10, 10), 5, 0)

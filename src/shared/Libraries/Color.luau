@@ -3,6 +3,12 @@
 --@date 2025/12/20
 
 -------------------------------------
+-- Constants
+-------------------------------------
+
+local HEXADECIMAL_COLOR_PATTER = "^#[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]$"
+
+-------------------------------------
 -- Services
 -------------------------------------
 
@@ -60,6 +66,16 @@ end
 ]]
 function Color.clampedSlerp(color1 : Color3, color2 : Color3, t : number) : Color3
     return Color.slerp(color1, color2, Math.clamp01(t))
+end
+
+
+--[[
+    Check whether the given string is an hexadecimal color
+    @param color String to check
+    @return True if the given string is an hexadecimal color, false otherwise 
+]]
+function Color.isHexadecimalColor(color : string) : boolean
+    return string.match(color, HEXADECIMAL_COLOR_PATTER) ~= nil
 end
 
 
