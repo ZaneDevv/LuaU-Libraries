@@ -1,7 +1,4 @@
-local BetterChatService = require(game:GetService("ReplicatedStorage").Shared.Services.BetterChatService)
+local SerializationService = require(game:GetService("ReplicatedStorage").Shared.Services.SerializationService)
 
-
-BetterChatService.addTagByPlayerId("#ffaa00", "プログラマー", game.Players.LocalPlayer.UserId)
-
-task.wait(5)
-BetterChatService.sendMessage("Welcome to the game yooooooooo", "#00f")
+local colorBuffer = SerializationService.serializeColor3(Color3.fromRGB(100, 209, 106))
+print(buffer.readu8(colorBuffer, 0), buffer.readu8(colorBuffer, 1), buffer.readu8(colorBuffer, 2))

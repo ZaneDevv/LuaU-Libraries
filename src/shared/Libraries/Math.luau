@@ -98,6 +98,15 @@ end
 
 
 --[[
+    Checks if the given number is an integer or not
+    @param x Number to check
+    @return True if the given number is an integer, false otherwise
+]]
+function Math.isInteger(x : number) : boolean
+    return x == math.floor(x)
+end
+
+--[[
     Sets the commas to the given number
     @param Number to set commas
     @return Number with all the needed commas set
