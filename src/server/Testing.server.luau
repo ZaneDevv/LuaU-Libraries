@@ -1,7 +1,25 @@
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local GizmosService = require(ReplicatedStorage:WaitForChild("Shared").Services.GizmosService)
+local SerializationService = require(game:GetService("ReplicatedStorage").Shared.Services.SerializationService)
+
+local remote = workspace:WaitForChild("RemoteEvent")
 
 
-GizmosService.createSphere(Vector3.new(0, 3, 0), 0.6, 0.4)
-GizmosService.createSphere(Vector3.new(2, 5, 0), 0.6, 0.4)
-GizmosService.createRay(Vector3.new(0, 3, 0), Vector3.new(2, 5, 0), 0.4)
+local color = Color3.new(1, 0, 1)
+local vector = Vector3int16.new(1, 1, 1)
+local number = 5
+
+
+while task.wait(1) do
+    print("Send")
+    remote:FireAllClients{
+        Normal = {
+            Color = color,
+            Vector = vector,
+            Number = number,
+        },
+        Serialized = {
+            Color = SerializationService.serializeColor3(color),
+            Vector = SerializationService.serializeVector3int16(vector),
+            Number = SerializationService.serializeUbyte(number)
+        }
+    }
+end

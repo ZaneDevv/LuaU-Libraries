@@ -1,4 +1,15 @@
+local remote = workspace:WaitForChild("RemoteEvent")
 local SerializationService = require(game:GetService("ReplicatedStorage").Shared.Services.SerializationService)
 
-local colorBuffer = SerializationService.serializeColor3(Color3.fromRGB(100, 209, 106))
-print(buffer.readu8(colorBuffer, 0), buffer.readu8(colorBuffer, 1), buffer.readu8(colorBuffer, 2))
+remote.OnClientEvent:Connect(function(data)
+    print(data.Normal)
+
+    print(data.Serialized.Vector, buffer.len(data.Serialized.Vector))
+    local deserialized = {
+        Color = SerializationService.deserializeColor3(data.Serialized.Color),
+        Vector = SerializationService.deserializeVector3int16(data.Serialized.Vector),
+        --Number = SerializationService.deserializeByte(data.Serialized.Number)
+    }
+
+    print(deserialized)
+end)
