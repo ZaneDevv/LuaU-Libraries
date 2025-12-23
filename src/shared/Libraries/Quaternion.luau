@@ -383,6 +383,10 @@ end
     @return Quaternion's axis rotation as a normalizated vector
 ]]
 function Quaternion:getAxis() : vector
+    if self.x == 0 and self.y == 0 and self.z == 0 then
+        return vector.zero
+    end
+
     return vector.normalize(vector.create(self.x, self.y, self.z))
 end
 
@@ -392,6 +396,10 @@ end
     @return Quaternion's axis rotation as a normalizated Vector3
 ]]
 function Quaternion:getAxisAsVector3() : Vector3
+    if self.x == 0 and self.y == 0 and self.z == 0 then
+        return Vector3.zero
+    end
+
     return Vector3.new(self.x, self.y, self.z).Unit
 end
 

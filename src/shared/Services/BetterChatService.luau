@@ -6,7 +6,7 @@
 -- Constants
 -------------------------------------
 
-local DEFAULT_CHAT_COLOR = "#ffffff"
+local DEFAULT_CHAT_COLOR = "#fff"
 
 local TAG_FORMAT = "<font color=\"%s\">[%s]</font> %s"
 local MESSAGE_FORMAT = "<font color=\"%s\">%s</font>"

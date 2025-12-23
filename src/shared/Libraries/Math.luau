@@ -3,7 +3,7 @@
 --@date 2025/12/20
 
 -------------------------------------
--- Constants
+-- Private constants
 -------------------------------------
 
 local SET_COMMAS_TO_NUMBER_REGEX_DETECTION = "^(-?%d+)(%d%d%d)"
@@ -28,6 +28,14 @@ local ABBREVIATIONS : {[string] : number} = {
 -------------------------------------
 
 local Math = {}
+
+-------------------------------------
+-- Public constants
+--------------------------------
+
+Math.TAU = 6.283185307179586
+Math.E = 2.718281828459045
+Math.EPSILON = 2e-4
 
 -------------------------------------
 -- Methods

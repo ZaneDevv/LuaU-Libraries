@@ -6,7 +6,8 @@
 -- Constants
 -------------------------------------
 
-local HEXADECIMAL_COLOR_PATTER = "^#[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]$"
+local HEXADECIMAL_COLOR_PATTER0 = "^#[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]$"
+local HEXADECIMAL_COLOR_PATTER1 = "^#[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]$"
 
 -------------------------------------
 -- Services
@@ -75,7 +76,7 @@ end
     @return True if the given string is an hexadecimal color, false otherwise 
 ]]
 function Color.isHexadecimalColor(color : string) : boolean
-    return string.match(color, HEXADECIMAL_COLOR_PATTER) ~= nil
+    return string.match(color, HEXADECIMAL_COLOR_PATTER0) ~= nil or string.match(color, HEXADECIMAL_COLOR_PATTER1) ~= nil
 end
 
 
