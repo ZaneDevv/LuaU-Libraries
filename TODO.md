@@ -7,4 +7,3 @@
 * Remote serializarion
 * BetterMarketplaceService
 * BetterDataStoreService
-* GizmosService

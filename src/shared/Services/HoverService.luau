@@ -179,7 +179,7 @@ end
 
 --[[
     Sets a default hover method
-    @method Method to be fired when a connected interface is hovered by the player's mouse
+    @param method Method to be fired when a connected interface is hovered by the player's mouse
 ]]
 function HoverService.setDefaultHoverMethod(method : (GuiBase2d) -> ())
     defaultHoverMethod = method
@@ -188,7 +188,7 @@ end
 
 --[[
     Sets a default unhover method
-    @method Method to be fired when a connected interface is unhovered by the player's mouse
+    @param method Method to be fired when a connected interface is unhovered by the player's mouse
 ]]
 function HoverService.setDefaultUnhoverMethod(method : (GuiBase2d) -> ())
     defaultUnhoverMethod = method
