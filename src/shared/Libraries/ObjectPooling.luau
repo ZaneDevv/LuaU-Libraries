@@ -3,6 +3,18 @@
 --@date 2025/12/22
 
 -------------------------------------
+-- Services
+-------------------------------------
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+-------------------------------------
+-- Modules
+-------------------------------------
+
+local Signal = require(ReplicatedStorage.Shared.Libraries.Signal)
+
+-------------------------------------
 -- Variables
 -------------------------------------
 
@@ -13,7 +25,7 @@ local ObjectPooling = {}
 -------------------------------------
 
 -- Object pooling instance's attributes
-type self = {reservedParent : Folder, objectToPool : Instance}
+type self = {_reservedParent : Folder, _objectToPool : Instance, OnObjectPooled : Signal.Signal, OnObjectWithdrawn : Signal.Signal}
 
 -- Object pooling instance type
 export type ObjectPooling = typeof(setmetatable({} :: self, ObjectPooling))
@@ -45,8 +57,11 @@ function ObjectPooling.new(objectToPool : Instance, defaultAmount : number?) : O
 
     return setmetatable(
         {
-            objectToPool = objectToPool,
-            reservedParent = folderParent
+            _objectToPool = objectToPool,
+            _reservedParent = folderParent,
+
+            OnObjectPooled = Signal.new(),
+            OnObjectWithdrawn = Signal.new()
         },
         ObjectPooling
     ) :: ObjectPooling
@@ -63,20 +78,23 @@ end
     @return The spawned instance
 ]]
 function ObjectPooling:spawn(unspawnDelay: number?, parent: Instance?) : Instance
-    local availableInstances = self.reservedParent:GetChildren()
+    local availableInstances = self._reservedParent:GetChildren()
     local newInstance = nil
 
     if #availableInstances == 0 then
-        newInstance = self.objectToPool:Clone()
+        newInstance = self._objectToPool:Clone()
     else
         newInstance = availableInstances[1]
     end
+
+    self.OnObjectPooled:fire()
 
     newInstance.Parent = parent or workspace
     
     if unspawnDelay then
         task.delay(unspawnDelay, function()
             newInstance.Parent = self.reservedParent
+            self.OnObjectWithdrawn:fire()
         end)
     end
 
