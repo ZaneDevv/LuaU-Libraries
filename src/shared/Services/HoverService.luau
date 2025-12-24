@@ -139,7 +139,6 @@ function HoverService.connect(interface : GuiBase2d, hoverMethod : ((GuiBase2d?)
 end
 
 
-
 --[[
     Disconnects the given interface from the hover and unhover events
     @error This method can only be used on client-side

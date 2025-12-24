@@ -106,6 +106,7 @@ function Math.isInteger(x : number) : boolean
     return x == math.floor(x)
 end
 
+
 --[[
     Sets the commas to the given number
     @param Number to set commas
