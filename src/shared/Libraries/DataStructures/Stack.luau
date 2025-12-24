@@ -44,12 +44,11 @@ end
     Create a new empty stack
 ]]
 function Stack.new(): Stack
-    return setmetatable(
-        {
-            _table = {}
-        },
-        Stack
-    ) :: Stack
+    local self = setmetatable({}, Stack) :: Stack
+
+    self._table = {}
+
+    return self
 end
 
 -------------------------------------

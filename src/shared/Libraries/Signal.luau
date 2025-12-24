@@ -10,7 +10,7 @@ local Signal = {}
 local Connection = {}
 
 -------------------------------------
--- Variables
+-- Types
 -------------------------------------
 
 -- Methods type
@@ -33,20 +33,21 @@ export type Signal = typeof(setmetatable({} :: signalSelf, Signal))
 -------------------------------------
 
 Signal.__index = Signal
+
 Connection.__index = Connection
+Connection.__type = "Connection"
 
 -------------------------------------
 -- Constructors
 -------------------------------------
 
 function Signal.new() : Signal
-    return setmetatable(
-        {
-            _connectedMethods = {},
-            _onceConnectedMethods = {}
-        }, 
-        Signal
-    ) :: Signal
+    local self = setmetatable({}, Signal) :: Signal
+
+    self._connectedMethods = {}
+    self._onceConnectedMethods = {}
+
+    return self
 end
 
 -------------------------------------

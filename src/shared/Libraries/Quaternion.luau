@@ -42,15 +42,14 @@ local Math = require(ReplicatedStorage.Shared.Libraries.Math)
     @param z Z-coordinate
 ]]
 function Quaternion.new(w : number?, x : number?, y : number?, z : number?) : Quaternion
-    return setmetatable(
-        {
-            w = w or 0,
-            x = x or 0,
-            y = y or 0,
-            z = z or 0
-        },
-        Quaternion
-    ) :: Quaternion
+    local self = setmetatable({} :: self, Quaternion) :: Quaternion
+
+    self.w = w or 0
+    self.x = x or 0
+    self.y = y or 0
+    self.z = z or 0
+
+    return self
 end
 
 

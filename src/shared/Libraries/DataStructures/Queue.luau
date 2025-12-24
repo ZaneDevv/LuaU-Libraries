@@ -26,12 +26,11 @@ export type Queue = typeof(setmetatable({} :: self, Queue))
     Create a new empty queue
 ]]
 function Queue.new(): Queue
-    return setmetatable(
-        {
-            _table = {}
-        },
-        Queue
-    ) :: Queue
+    local self = setmetatable({}, Queue) :: Queue
+
+    self._table = {}
+
+    return self
 end
 
 -------------------------------------

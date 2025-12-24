@@ -12,7 +12,10 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 -- Modules
 -------------------------------------
 
-local Signal = require(ReplicatedStorage.Shared.Libraries.Signal)
+local libraries = ReplicatedStorage.Shared.Libraries
+
+local Maid = require(libraries.Maid)
+local Signal = require(libraries.Signal)
 
 -------------------------------------
 -- Variables
@@ -25,7 +28,7 @@ local ObjectPooling = {}
 -------------------------------------
 
 -- Object pooling instance's attributes
-type self = {_reservedParent : Folder, _objectToPool : Instance, OnPoolObject : Signal.Signal, OnWithdrawObject : Signal.Signal}
+type self = {_reservedParent : Folder, _objectToPool : Instance, _maid : Maid.Maid, OnPoolObject : Signal.Signal, OnWithdrawObject : Signal.Signal}
 
 -- Object pooling instance type
 export type ObjectPooling = typeof(setmetatable({} :: self, ObjectPooling))
@@ -47,24 +50,23 @@ ObjectPooling.__index = ObjectPooling
     @return A new object pooling instance
 ]]
 function ObjectPooling.new(objectToPool : Instance, defaultAmount : number?) : ObjectPooling
-    local folderParent = Instance.new("Folder")
-    folderParent.Parent = script
+    local self : ObjectPooling = setmetatable({} :: self, ObjectPooling)
+
+    self._objectToPool = objectToPool
+    self._reservedParent = Instance.new("Folder")
+    self._reservedParent.Parent = script
+
+    self._maid = Maid.new()
+
+    self.OnPoolObject = self._maid:add(Signal.new())
+    self.OnWithdrawObject = self._maid:add(Signal.new())
 
     for _ = 1, defaultAmount or 1 do
         local newInstance = objectToPool:Clone()
-        newInstance.Parent = folderParent
+        newInstance.Parent = self._reservedParent
     end
 
-    return setmetatable(
-        {
-            _objectToPool = objectToPool,
-            _reservedParent = folderParent,
-
-            OnPoolObject = Signal.new(),
-            OnWithdrawObject = Signal.new()
-        },
-        ObjectPooling
-    ) :: ObjectPooling
+    return self
 end
 
 -------------------------------------
@@ -98,6 +100,11 @@ function ObjectPooling:spawn(unspawnDelay: number?, parent: Instance?) : Instanc
     end
 
     return newInstance
+end
+
+
+function ObjectPooling:destroy()
+    self._maid:clean()
 end
 
 

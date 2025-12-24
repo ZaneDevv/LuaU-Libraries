@@ -43,12 +43,11 @@ end
     Create a new empty set
 ]]
 function Set.new(): Set
-    return setmetatable(
-        {
-            _table = {}
-        },
-        Set
-    ) :: Set
+    local self = setmetatable({}, Set) :: Set
+
+    self._table = {}
+
+    return self
 end
 
 -------------------------------------
