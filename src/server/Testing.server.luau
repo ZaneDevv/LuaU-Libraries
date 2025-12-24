@@ -1,7 +1,6 @@
-local SerializationService = require(game:GetService("ReplicatedStorage").Shared.Services.SerializationService)
+--[[local SerializationService = require(game:GetService("ReplicatedStorage").Shared.Services.SerializationService)
 
 local remote = workspace:WaitForChild("RemoteEvent")
-
 
 local color = Color3.new(1, 0, 1)
 local vector = Vector3int16.new(1, 1, 1)
@@ -25,4 +24,4 @@ while task.wait(1) do
             CFrame = cframe
         }
     }
-end
+end]]

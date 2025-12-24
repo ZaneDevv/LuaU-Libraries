@@ -1,27 +1,20 @@
 task.wait(5)
 
 
-local Signal = require(game:GetService("ReplicatedStorage").Shared.Libraries.Signal)
+local ObjectPooling = require(game:GetService("ReplicatedStorage").Shared.Libraries.ObjectPooling)
+local Quaternion = require(game:GetService("ReplicatedStorage").Shared.Libraries.Quaternion)
+local objectPool = ObjectPooling.new(game:GetService("ReplicatedStorage").Duck, 5)
 
-
-local signal = Signal.new()
-
-local connection = signal:connect(function()
-    print("Connection1")
+objectPool.OnPoolObject:connect(function(instance : BasePart)
+    instance.Size /= 4
+    instance.CFrame *= CFrame.new(math.random(-10, 10), 0, 0) * Quaternion.fromAxisAngle(Vector3.xAxis, math.pi / 2):toCFrame()
 end)
 
-signal:connect(function()
-    print("Connection2")
+objectPool.OnWithdrawObject:connect(function()
+    print("Withdrawn!")
 end)
 
-signal:once(function()
-    print("Connection3")
-end)
-
-
-signal:fire()
-signal:fire()
-
-connection:disconnect()
-
-signal:fire()
+while true do
+    objectPool:spawn(5)
+    task.wait(1)
+end

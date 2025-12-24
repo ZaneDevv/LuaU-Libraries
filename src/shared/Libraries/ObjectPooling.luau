@@ -25,7 +25,7 @@ local ObjectPooling = {}
 -------------------------------------
 
 -- Object pooling instance's attributes
-type self = {_reservedParent : Folder, _objectToPool : Instance, OnObjectPooled : Signal.Signal, OnObjectWithdrawn : Signal.Signal}
+type self = {_reservedParent : Folder, _objectToPool : Instance, OnPoolObject : Signal.Signal, OnWithdrawObject : Signal.Signal}
 
 -- Object pooling instance type
 export type ObjectPooling = typeof(setmetatable({} :: self, ObjectPooling))
@@ -60,8 +60,8 @@ function ObjectPooling.new(objectToPool : Instance, defaultAmount : number?) : O
             _objectToPool = objectToPool,
             _reservedParent = folderParent,
 
-            OnObjectPooled = Signal.new(),
-            OnObjectWithdrawn = Signal.new()
+            OnPoolObject = Signal.new(),
+            OnWithdrawObject = Signal.new()
         },
         ObjectPooling
     ) :: ObjectPooling
@@ -87,14 +87,13 @@ function ObjectPooling:spawn(unspawnDelay: number?, parent: Instance?) : Instanc
         newInstance = availableInstances[1]
     end
 
-    self.OnObjectPooled:fire()
-
+    self.OnPoolObject:fire(newInstance)
     newInstance.Parent = parent or workspace
     
     if unspawnDelay then
         task.delay(unspawnDelay, function()
             newInstance.Parent = self.reservedParent
-            self.OnObjectWithdrawn:fire()
+            self.OnWithdrawObject:fire()
         end)
     end
 

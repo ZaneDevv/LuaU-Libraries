@@ -14,19 +14,19 @@ local Connection = {}
 -------------------------------------
 
 -- Methods type
-type method = () -> ()
+type method = (...any) -> ()
 
 -- Signal instance's attributes
-type signalSelf = {_connectedMethods : {method}}
-
--- Signal instance type
-export type Signal = typeof(setmetatable({} :: signalSelf, Signal))
+type signalSelf = {_connectedMethods : {[Connection] : method}, _onceConnectedMethods : {method}}
 
 -- Connection instance's attributes
-type connectionSelf = {_index : any, _signal : Signal}
+type connectionSelf = {_signal : Signal}
 
 -- Connection instance type
 export type Connection = typeof(setmetatable({} :: connectionSelf, Connection))
+
+-- Signal instance type
+export type Signal = typeof(setmetatable({} :: signalSelf, Signal))
 
 -------------------------------------
 -- Metamethods
@@ -56,14 +56,16 @@ end
 --[[
     Fires all the methods connected to this signal
 ]]
-function Signal:fire()
+function Signal:fire(... : any)
+    local onceConnectedMethods = self._onceConnectedMethods
+    table.clear(self._onceConnectedMethods)
+
     for _, method in self._connectedMethods do
-        task.defer(method)
+        task.defer(method, ...)
     end
 
-    for index, method in ipairs(self._onceConnectedMethods) do
-        task.defer(method)
-        table.remove(self._onceConnectedMethods, index)
+    for _, method in ipairs(onceConnectedMethods) do
+        task.defer(method, ...)
     end
 end
 
@@ -83,10 +85,16 @@ end
     @return A new connection instance
 ]]
 function Signal:connect(method : method) : Connection
-    local connectionIndex = newproxy()
-    self._connectedMethods[connectionIndex] = method
+    local connection = setmetatable(
+        {
+            _signal = self
+        } :: connectionSelf,
+        Connection
+    )
 
-    return setmetatable({_index = connectionIndex, _signal = self}, Connection)
+    self._connectedMethods[connection :: Connection] = method
+
+    return connection
 end
 
 
@@ -94,7 +102,7 @@ end
     Disconnects the current connection from the signal
 ]]
 function Connection:disconnect()
-    self._signal._connectedMethods[self._index] = nil
+    self._signal._connectedMethods[self] = nil
 end
 
 
