@@ -40,7 +40,8 @@ local BetterChatService = {}
 
 local tags : {tagsData} = {}
 
-local Channel = TextChatService:WaitForChild("TextChannels"):WaitForChild("RBXGeneral")
+local Channel = TextChatService:WaitForChild("TextChannels"):FindFirstChild("RBXGeneral")
+local handlerRegistered = false
 
 -------------------------------------
 -- Modules
@@ -58,34 +59,40 @@ local Color = require(libraries.Color)
     @param message Sent message data
     @return Message properties
 ]]
-local function onMessageSent(message: TextChatMessage) : TextChatMessageProperties?
-    if not message.TextSource then
-		return
-	end
-
-    local playerId = message.TextSource.UserId
-    local player = Players:GetPlayerByUserId(playerId)
-    if not player then
-		return
-	end
-
-    local messageProperties = Instance.new("TextChatMessageProperties")
-
-    for _, tagData : tagsData in ipairs(tags) do
-        local canSetTag = true
-
-        if tagData.condition then
-            canSetTag = tagData.condition(playerId)
-        end 
-
-        if not canSetTag then
-            continue
-        end
-
-        messageProperties.PrefixText = string.format(TAG_FORMAT, tagData.color, tagData.name, message.PrefixText)
+local function ensureHandlerRegistered()
+	if handlerRegistered then
+        return
     end
 
-    return messageProperties
+    TextChatService.OnIncomingMessage = function(message: TextChatMessage)
+        if not message.TextSource then
+            return
+        end
+
+        local userId = message.TextSource.UserId
+        local player = Players:GetPlayerByUserId(userId)
+        if not player then
+            return
+        end
+
+        local messageProperties = Instance.new("TextChatMessageProperties")
+        local prefix = message.PrefixText or ""
+
+        for _, tagData in ipairs(tags) do
+            local canSetTag = true
+            if tagData.condition then
+                canSetTag = tagData.condition(userId)
+            end
+            if canSetTag then
+                prefix = string.format(TAG_FORMAT, tagData.color, tagData.name, prefix)
+            end
+        end
+
+        messageProperties.PrefixText = prefix
+        return messageProperties
+    end
+
+    handlerRegistered = true
 end
 
 
@@ -97,6 +104,7 @@ end
 ]]
 function BetterChatService.addTagByPlayerId(color : string, tagName : string, id : number)
     assert(RunService:IsClient(), "This methos can only be utilized on client-side")
+    assert(Channel, "RBXGeneral channel not found")
     assert(Color.isHexadecimalColor(color), "Unrecognizable color for the tag")
     assert(utf8.len(tagName) <= MAX_TAG_CHARACTERS, "The set tag name is too long")
 
@@ -108,7 +116,7 @@ function BetterChatService.addTagByPlayerId(color : string, tagName : string, id
         end
     })
 
-    TextChatService.OnIncomingMessage = onMessageSent
+    ensureHandlerRegistered()
 end
 
 
@@ -119,7 +127,8 @@ end
     @param condition Condition to give the tag to the user
 ]]
 function BetterChatService.addTagByCondition(color : string, tagName : string, condition : tagCondition)
-    assert(RunService:IsClient(), "This methos can only be utilized on client-side")
+    assert(RunService:IsClient(), "This method can only be utilized on client-side")
+    assert(Channel, "RBXGeneral channel not found")
     assert(Color.isHexadecimalColor(color), "Unrecognizable color for the tag")
     assert(utf8.len(tagName) <= MAX_TAG_CHARACTERS, "The set tag name is too long")
 
@@ -129,9 +138,7 @@ function BetterChatService.addTagByCondition(color : string, tagName : string, c
         condition = condition
     })
 
-    if TextChatService.OnIncomingMessage == nil then
-        TextChatService.OnIncomingMessage = onMessageSent
-    end    
+    ensureHandlerRegistered()
 end
 
 
@@ -142,6 +149,7 @@ end
 ]]
 function BetterChatService.sendMessage(message : string, color : string?)
     assert(RunService:IsClient(), "This method can only be utilized on client-side")
+    assert(Channel, "RBXGeneral channel not found")
 
     if color == nil then
         color = DEFAULT_CHAT_COLOR
