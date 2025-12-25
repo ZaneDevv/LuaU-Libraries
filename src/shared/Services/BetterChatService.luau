@@ -101,6 +101,10 @@ end
     @param color Tag's hexadecimal color
     @param tagName Tag's name
     @param id User's id to give the tag
+    @error This method was used on the server
+    @error Roblox channel was not found
+    @error The given color is not an actual color
+    @error The tag is too long
 ]]
 function BetterChatService.addTagByPlayerId(color : string, tagName : string, id : number)
     assert(RunService:IsClient(), "This methos can only be utilized on client-side")
@@ -125,6 +129,10 @@ end
     @param color Tag's hexadecimal color
     @param tagName Tag's name
     @param condition Condition to give the tag to the user
+    @error This method was used on the server
+    @error Roblox channel was not found
+    @error The given color is not an actual color
+    @error The tag is too long
 ]]
 function BetterChatService.addTagByCondition(color : string, tagName : string, condition : tagCondition)
     assert(RunService:IsClient(), "This method can only be utilized on client-side")
@@ -146,6 +154,8 @@ end
     Sends the given message to the chat
     @param message Message to send
     @param message Message color
+    @error This method was used on the server
+    @error Roblox channel was not found
 ]]
 function BetterChatService.sendMessage(message : string, color : string?)
     assert(RunService:IsClient(), "This method can only be utilized on client-side")

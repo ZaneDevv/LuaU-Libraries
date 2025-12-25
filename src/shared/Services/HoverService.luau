@@ -29,6 +29,8 @@ local AABB = require(ReplicatedStorage.Shared.Libraries.AABB)
 
 local HoverService = {}
 
+local registeredMethods : {[any] : {hoverMethod : ((GuiBase2d?) -> ())?, unhoverMethod : ((GuiBase2d?) -> ())?}} = {}
+
 local connectedInterfaces : {[GuiBase2d]: savedInterfaces} = {} :: savedInterfaces
 local isHoveredInterface : {[GuiBase2d] : {isHovered : boolean, aabb : AABB.AABB}} = {}
 
@@ -140,6 +142,19 @@ end
 
 
 --[[
+    Connects the given interface with the methods registered under the given key
+    @param key Hover/unhover methods' key
+    @param interface Interface to connect by the key
+    @error The given key was not registered yet
+    @error This method can only be used on client-side
+]]
+function HoverService.connectByKey(key : any, interface : GuiBase2d)
+    assert(registeredMethods[key] ~= nil, "There are no methods with the given key")
+    HoverService.connect(interface, registeredMethods[key].hoverMethod, registeredMethods[key].unhoverMethod)
+end
+
+
+--[[
     Disconnects the given interface from the hover and unhover events
     @error This method can only be used on client-side
 ]]
@@ -192,6 +207,30 @@ end
 function HoverService.setDefaultUnhoverMethod(method : (GuiBase2d) -> ())
     defaultUnhoverMethod = method
 end
+
+
+--[[
+    Registers the hover and unhover method under a key
+    @param key Key to register the given methods
+    @param hoverMethod Hover method to register
+    @param unhoverMethod Unhover method to register
+]]
+function HoverService.registerMethod(key : any, hoverMethod : ((GuiBase2d?) -> ())?, unhoverMethod : ((GuiBase2d?) -> ())?)
+    registeredMethods[key] = {
+        hoverMethod = hoverMethod,
+        unhoverMethod = unhoverMethod
+    }
+end
+
+
+--[[
+    Removes the registered methods by the given key
+    @param key Methods' key to remove
+]]
+function HoverService.removeMethodsByKey(key : any)
+    registeredMethods[key] = nil
+end
+
 
 
 return HoverService
