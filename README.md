@@ -9,6 +9,7 @@ At the moment, it counts with:
     * Stack
     * Queue
     * Set
+    * Octree
 * Services
     * HoverService
     * ShiftLockService
