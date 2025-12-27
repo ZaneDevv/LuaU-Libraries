@@ -62,18 +62,22 @@ function Maid:clean()
     for _, item in ipairs(self._itemsToDestroy) do
         if item.destroy then
             item:destroy()
+            continue
         end
 
         if item.disconnect then
             item:disconnect()
+            continue
         end
 
         if item.Destroy then
             item:Destroy()
+            continue
         end
 
         if item.Disconnect then
             item:Disconnect()
+            continue
         end
 
         if typeof(item) == "thread" then

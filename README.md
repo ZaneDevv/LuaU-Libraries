@@ -28,6 +28,7 @@ At the moment, it counts with:
     * Signal
     * Maid
     * Promise
+    * Throttle
 
 Even though most of them are not even finished yet, it is a good first approach to those methods.
 

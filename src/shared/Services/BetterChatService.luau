@@ -64,7 +64,7 @@ local function ensureHandlerRegistered()
         return
     end
 
-    TextChatService.OnIncomingMessage = function(message: TextChatMessage)
+    TextChatService.OnIncomingMessage = function(message : TextChatMessage)
         if not message.TextSource then
             return
         end
