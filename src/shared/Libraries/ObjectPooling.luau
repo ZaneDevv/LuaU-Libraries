@@ -52,11 +52,11 @@ ObjectPooling.__index = ObjectPooling
 function ObjectPooling.new(objectToPool : Instance, defaultAmount : number?) : ObjectPooling
     local self : ObjectPooling = setmetatable({} :: self, ObjectPooling)
 
-    self._objectToPool = objectToPool
-    self._reservedParent = Instance.new("Folder")
-    self._reservedParent.Parent = script
-
     self._maid = Maid.new()
+
+    self._objectToPool = objectToPool
+    self._reservedParent = self._maid:add(Instance.new("Folder"))
+    self._reservedParent.Parent = script
 
     self.OnPoolObject = self._maid:add(Signal.new())
     self.OnWithdrawObject = self._maid:add(Signal.new())
@@ -103,6 +103,9 @@ function ObjectPooling:spawn(unspawnDelay: number?, parent: Instance?) : Instanc
 end
 
 
+--[[
+    Removes all the object pooling instance
+]]
 function ObjectPooling:destroy()
     self._maid:clean()
 end
