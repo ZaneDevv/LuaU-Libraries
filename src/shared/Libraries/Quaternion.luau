@@ -413,4 +413,4 @@ end
 
 
 
-return Quaternion
+return table.freeze(Quaternion)

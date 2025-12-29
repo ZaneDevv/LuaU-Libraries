@@ -113,4 +113,4 @@ end
 
 
 
-return GizmosServices
+return table.freeze(GizmosServices)

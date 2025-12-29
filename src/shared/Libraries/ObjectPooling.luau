@@ -28,7 +28,7 @@ local ObjectPooling = {}
 -------------------------------------
 
 -- Object pooling instance's attributes
-type self = {_reservedParent : Folder, _objectToPool : Instance, _maid : Maid.Maid, OnPoolObject : Signal.Signal, OnWithdrawObject : Signal.Signal}
+type self = {_reservedParent : Folder, _objectToPool : Instance, _maid : Maid.Maid, OnPoolObject : Signal.Signal, OnWithdrawObject : Signal.Signal, OnDestroy : Signal.Signal}
 
 -- Object pooling instance type
 export type ObjectPooling = typeof(setmetatable({} :: self, ObjectPooling))
@@ -60,6 +60,7 @@ function ObjectPooling.new(objectToPool : Instance, defaultAmount : number?) : O
 
     self.OnPoolObject = self._maid:add(Signal.new())
     self.OnWithdrawObject = self._maid:add(Signal.new())
+    self.OnDestroy = self._maid:add(Signal.new())
 
     for _ = 1, defaultAmount or 1 do
         local newInstance = objectToPool:Clone()
@@ -107,9 +108,10 @@ end
     Removes all the object pooling instance
 ]]
 function ObjectPooling:destroy()
+    self.OnDestroy:fire()
     self._maid:clean()
 end
 
 
 
-return ObjectPooling
+return table.freeze(ObjectPooling)

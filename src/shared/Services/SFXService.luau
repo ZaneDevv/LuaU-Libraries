@@ -48,4 +48,4 @@ function SFXService.PlaySound(id : number, parent: Instance?, volume: number?, s
 end
 
 
-return SFXService
+return table.freeze(SFXService)

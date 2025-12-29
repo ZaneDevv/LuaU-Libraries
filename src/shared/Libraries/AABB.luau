@@ -152,4 +152,4 @@ end
 
 
 
-return AABB
+return table.freeze(AABB)

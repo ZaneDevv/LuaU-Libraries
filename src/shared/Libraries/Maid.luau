@@ -50,7 +50,7 @@ end
     @return The item set to the current maid
 ]]
 function Maid:add<T>(item : T) : T
-    table.insert(self._itemsToDestroy(), item)
+    table.insert(self._itemsToDestroy, item)
     return item
 end
 
@@ -89,4 +89,4 @@ function Maid:clean()
 end
 
 
-return Maid
+return table.freeze(Maid)

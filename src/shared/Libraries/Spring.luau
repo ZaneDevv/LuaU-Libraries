@@ -55,4 +55,4 @@ end
 
 
 
-return Spring
+return table.freeze(Spring)

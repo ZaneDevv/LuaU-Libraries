@@ -76,6 +76,52 @@ end
 
 
 --[[
+    Given a lerp, computes the corresponding progression (t) between a and b which corresponds to the lerped value
+    @param a The starting lerp value
+    @param b The final lerp value
+    @param lerped value between a and b
+    @return Progression t corresponding to the lerped value between a and b
+]]
+function Math.inverseLerp(a : number, b : number, lerped : number) : number
+    if a == b or lerped == a then
+        return 0
+    end
+
+    if b == lerped then
+        return 1
+    end
+
+    return (lerped - a) / (b - a)
+end
+
+
+--[[
+    Maps the given interpolation into a different one
+    @param lerped Lerped value between inputMinimum and inputMaximum
+    @param inputMinimum Starting value for the mapped interpolation
+    @param inputMaximum Final value for the mapped interpolation
+    @param outputMinimum Starting value for the new interpolation to map into
+    @param outputMaximum Final value for the new interpolation to map into
+    @return A lerped number between outputMinimum and outputMaximum which corresponds to the progression of lerped between inputMinimum and inputMaximum
+]]
+function Math.map(lerped : number, inputMinimum : number, inputMaximum : number, outputMinimum : number, outputMaximum : number) : number
+    return Math.lerp(outputMinimum, outputMaximum, Math.inverseLerp(inputMinimum, inputMaximum, lerped))
+end
+
+
+--[[
+    Checks if the two given numbers and close enough to each other
+    @param a First value to compare
+    @param b Seconds value to compare
+    @param epsilon Optional number to check if the two previous numbers are close enough to each other. By default, Ɛ = 2e-4
+    @return True if the two numbers are approximate, false otherwise
+]]
+function Math.isApproximate(a : number, b : number, epsilon : number?) : boolean
+    return math.abs(a - b) <= (epsilon or Math.EPSILON)
+end
+
+
+--[[
     Checks if the given number is within the given range
     @param x Number to check
     @param min Minimum number in the range
@@ -93,6 +139,10 @@ end
     @return True if the given number is even, false otherwise
 ]]
 function Math.isEven(x : number) : boolean
+    if not Math.isInteger(x) then
+        return false
+    end
+
     return bit32.band(x, 1) == 0
 end
 
@@ -160,4 +210,4 @@ function Math.Abbreviate(x : number) : string
 end
 
 
-return Math
+return table.freeze(Math)

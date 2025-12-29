@@ -181,4 +181,4 @@ end
 
 
 
-return Queue
+return table.freeze(Queue)

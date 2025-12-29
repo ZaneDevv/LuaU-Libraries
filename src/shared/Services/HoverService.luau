@@ -233,4 +233,4 @@ end
 
 
 
-return HoverService
+return table.freeze(HoverService)

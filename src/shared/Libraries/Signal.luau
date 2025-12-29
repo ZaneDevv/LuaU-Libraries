@@ -107,4 +107,4 @@ function Connection:disconnect()
 end
 
 
-return Signal
+return table.freeze(Signal)

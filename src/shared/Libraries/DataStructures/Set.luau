@@ -182,4 +182,4 @@ end
 
 
 
-return Set
+return table.freeze(Set)

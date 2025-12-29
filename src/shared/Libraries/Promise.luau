@@ -2068,4 +2068,4 @@ function Promise.onUnhandledRejection(callback)
 	end
 end
 
-return Promise
+return table.freeze(Promise)

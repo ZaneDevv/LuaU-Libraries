@@ -184,4 +184,4 @@ end
 
 
 
-return Stack
+return table.freeze(Stack)

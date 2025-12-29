@@ -78,4 +78,4 @@ end
 
 
 
-return ShiftLockService
+return table.freeze(ShiftLockService)

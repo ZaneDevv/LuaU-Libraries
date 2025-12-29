@@ -80,5 +80,33 @@ function Color.isHexadecimalColor(color : string) : boolean
 end
 
 
+--[[
+    Maps the given interpolation into a different one
+    @param lerped Lerped value between inputMinimum and inputMaximum
+    @param inputMinimum Starting value for the mapped interpolation
+    @param inputMaximum Final value for the mapped interpolation
+    @param outputMinimum Starting value for the new interpolation to map into
+    @param outputMaximum Final value for the new interpolation to map into
+    @return A lerped number between outputMinimum and outputMaximum which corresponds to the progression of lerped between inputMinimum and inputMaximum
+]]
+function Color.mapFromNumbers(lerped : number, inputMinimum : number, inputMaximum : number, outputMinimum : Color3, outputMaximum : Color3) : Color3
+    return outputMinimum:Lerp(outputMaximum, Math.inverseLerp(inputMinimum, inputMaximum, lerped))
+end
 
-return Color
+
+--[[
+    Maps the given spherical interpolation into a different one
+    @param slerped Slerped value between inputMinimum and inputMaximum
+    @param inputMinimum Starting value for the mapped interpolation
+    @param inputMaximum Final value for the mapped interpolation
+    @param outputMinimum Starting value for the new interpolation to map into
+    @param outputMaximum Final value for the new interpolation to map into
+    @return A slerped number between outputMinimum and outputMaximum which corresponds to the progression of slerped between inputMinimum and inputMaximum
+]]
+function Color.sphericalMapFromNumbers(slerped : number, inputMinimum : number, inputMaximum : number, outputMinimum : Color3, outputMaximum : Color3) : Color3
+    return Color.slerp(outputMinimum, outputMaximum, Math.inverseLerp(inputMinimum, inputMaximum, slerped))
+end
+
+
+
+return table.freeze(Color)

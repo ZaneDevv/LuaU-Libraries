@@ -360,4 +360,4 @@ function SerializationService.serializeAny(data : any) : buffer?
 end
 
 
-return SerializationService
+return table.freeze(SerializationService)

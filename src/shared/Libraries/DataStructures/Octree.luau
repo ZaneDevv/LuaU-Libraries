@@ -368,6 +368,6 @@ end
 
 Octree.__iter = Octree.ForEachNode
 
-return {
+return table.freeze({
 	new = CreateOctree,
-}
+})

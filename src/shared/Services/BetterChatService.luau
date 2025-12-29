@@ -173,4 +173,4 @@ end
 
 
 
-return BetterChatService
+return table.freeze(BetterChatService)
