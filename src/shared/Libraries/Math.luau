@@ -23,6 +23,8 @@ local ABBREVIATIONS : {[string] : number} = {
 	Dc = 1e33,
 }
 
+local RANDOM_GENERATOR = Random.new()
+
 -------------------------------------
 -- Variables
 -------------------------------------
@@ -207,6 +209,38 @@ function Math.Abbreviate(x : number) : string
 	local prefixNumber: number = math.floor(x / chosenAbbreviationMinNumber * 10) / 10
 	
 	return `{tostring(prefixNumber)} {chosenAbbreviationSubfix}+`
+end
+
+
+--[[
+    Ponderates the given data
+    @param data All the items with their respective weight
+    @return A random element from the data
+]]
+function Math.poderate(data : {{weight : number, item : any}}) : any
+    local totalWeight: number = 0
+	
+	for _, item in ipairs(data) do
+		totalWeight += item.weight
+	end
+	
+	if totalWeight <= 0 then
+		return nil
+	end
+
+	local randomNumber: number = RANDOM_GENERATOR:NextNumber(0, totalWeight)
+	local result: any? = nil
+
+	for _, item in ipairs(data) do
+		if randomNumber <= item.weight then
+			result = item
+			break
+		end
+
+		randomNumber -= item.weight
+	end
+
+	return result
 end
 
 

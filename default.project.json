@@ -15,6 +15,10 @@
       }
     },
 
+    "ReplicatedFirst": {
+      "$path": "src/replicatedFirst"
+    },
+
     "StarterPlayer": {
       "StarterPlayerScripts": {
         "Client": {
