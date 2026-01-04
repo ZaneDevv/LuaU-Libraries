@@ -1,8 +1,8 @@
 task.wait(5)
 
 
-local ObjectPooling = require(game:GetService("ReplicatedStorage").Shared.Libraries.ObjectPooling)
-local Quaternion = require(game:GetService("ReplicatedStorage").Shared.Libraries.Quaternion)
+local ObjectPooling = require(game:GetService("ReplicatedStorage").Shared.Utils.Libraries.ObjectPooling)
+local Quaternion = require(game:GetService("ReplicatedStorage").Shared.Utils.Libraries.Quaternion)
 local objectPool = ObjectPooling.new(game:GetService("ReplicatedStorage").Duck, 5)
 
 objectPool.OnPoolObject:connect(function(instance : BasePart)

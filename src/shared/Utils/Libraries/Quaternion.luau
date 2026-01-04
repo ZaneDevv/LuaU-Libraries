@@ -28,7 +28,7 @@ export type Quaternion = typeof(setmetatable({} :: self, Quaternion))
 -- Modules
 -------------------------------------
 
-local Math = require(ReplicatedStorage.Shared.Libraries.Math)
+local Math = require("./Math")
 
 -------------------------------------
 -- Constructor

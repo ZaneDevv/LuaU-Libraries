@@ -2,20 +2,13 @@
 --@author Álvaro Fernández Barrero
 --@date 2025/12/22
 
--------------------------------------
--- Services
--------------------------------------
-
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -------------------------------------
 -- Modules
 -------------------------------------
 
-local libraries = ReplicatedStorage.Shared.Libraries
-
-local Maid = require(libraries.Maid)
-local Signal = require(libraries.Signal)
+local Maid = require("../Libraries/Maid")
+local Signal = require("../Libraries/Signal")
 
 -------------------------------------
 -- Variables
@@ -56,6 +49,7 @@ function ObjectPooling.new(objectToPool : Instance, defaultAmount : number?) : O
 
     self._objectToPool = objectToPool
     self._reservedParent = self._maid:add(Instance.new("Folder"))
+    self._reservedParent.Name = `{objectToPool.Name}`
     self._reservedParent.Parent = script
 
     self.OnPoolObject = self._maid:add(Signal.new())
