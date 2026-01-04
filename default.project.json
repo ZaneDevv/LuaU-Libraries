@@ -9,6 +9,15 @@
       }
     },
 
+    "ReplicatedStorage": {
+      "Shared": {
+        "$path": "src/shared"
+      },
+      "ClientScripts": {
+        "$path": "src/client"
+      }
+    },
+
     "ServerScriptService": {
       "Server": {
         "$path": "src/server"

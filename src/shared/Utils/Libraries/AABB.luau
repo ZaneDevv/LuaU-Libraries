@@ -3,12 +3,6 @@
 --@date 2025/12/20
 
 -------------------------------------
--- Services
--------------------------------------
-
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-
--------------------------------------
 -- Class
 -------------------------------------
 
@@ -31,7 +25,7 @@ export type AABB = typeof(setmetatable({} :: self, AABB))
 -- Modules
 -------------------------------------
 
-local Math = require(ReplicatedStorage.Shared.Libraries.Math)
+local Math = require("./Math")
 
 -------------------------------------
 -- Constructor
