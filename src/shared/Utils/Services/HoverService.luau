@@ -15,13 +15,12 @@ type savedInterfaces = {ui : GuiBase, hoverMethod : (RBXScriptConnection | () ->
 
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -------------------------------------
 -- Modules
 -------------------------------------
 
-local AABB = require(ReplicatedStorage.Shared.Libraries.AABB)
+local AABB = require("../Libraries/AABB")
 
 -------------------------------------
 -- Variables

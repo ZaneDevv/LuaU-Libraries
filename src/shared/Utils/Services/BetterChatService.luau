@@ -27,7 +27,6 @@ type tagsData = {color : string, name : string, condition : tagCondition?}
 -- Services
 -------------------------------------
 
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TextChatService = game:GetService('TextChatService')
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
@@ -47,8 +46,7 @@ local handlerRegistered = false
 -- Modules
 -------------------------------------
 
-local libraries = ReplicatedStorage.Shared.Libraries
-local Color = require(libraries.Color)
+local Color = require("../Libraries/Color")
 
 -------------------------------------
 -- Methods
