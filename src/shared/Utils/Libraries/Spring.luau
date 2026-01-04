@@ -39,7 +39,7 @@ function Spring.new(k : number, mass : number, damping : number, position : spri
 
     self.position = position
     self.target = target or position
-    self.velocity = position * 0
+    self.velocity = (position :: any) * 0
 
     return self
 end
@@ -49,8 +49,8 @@ end
 -------------------------------------
 
 function Spring:update(deltaTime : number)
-    self.velocity += ((-self.k * (self.target - self.position) / self.mass) - (self.damping * self.velocity)) * deltaTime
-    self.position += self.velocity * deltaTime
+    self.velocity = (self.velocity :: any) ((-self.k * (self.target :: any - self.position :: any) / self.mass) - (self.damping :: any * self.velocity :: any)) * deltaTime
+    self.position = self.position :: any + self.velocity * deltaTime
 end
 
 

@@ -25,7 +25,7 @@ local Color = {}
 -- Modules
 -------------------------------------
 
-local Math = require(ReplicatedStorage.Shared.Libraries.Math)
+local Math = require("./Math")
 
 -------------------------------------
 -- Methods
