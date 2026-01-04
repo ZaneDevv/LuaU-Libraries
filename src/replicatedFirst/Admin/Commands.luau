@@ -1,5 +1,0 @@
-return {
-    ["tp"] = function()
-
-    end
-}
