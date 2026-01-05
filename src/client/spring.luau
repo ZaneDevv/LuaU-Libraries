@@ -56,6 +56,4 @@ function Printer.init()
 end
 
 
-
-
 return Printer

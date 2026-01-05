@@ -13,4 +13,4 @@ local ServerScriptService = game:GetService("ServerScriptService")
 -- Load
 -------------------------------------
 
-require(ReplicatedStorage.Shared.Utils.ModuleLoader)(ServerScriptService.Server.scripts)
+require(ReplicatedStorage.Shared.Utils.ModuleLoader)(ServerScriptService.Scripts)
