@@ -5,11 +5,12 @@ During my experience, I saw the lack of quite a few methods that could make the 
 
 At the moment, it counts with:
 
+* ModuleLoader
 * Data structures
     * Stack
     * Queue
     * Set
-    * Octree
+    * [Octree](https://github.com/Sleitnick/rbxts-octo-tree/tree/main)
 * Services
     * HoverService
     * ShiftLockService
@@ -27,8 +28,10 @@ At the moment, it counts with:
     * ObjectPooling
     * Signal
     * Maid
-    * Promise
     * Throttle
+    * [t](https://github.com/osyrisrblx/t)
+    * [Promise](https://eryn.io/roblox-lua-promise/)
+    * [TopBarPlus](https://github.com/1ForeverHD/TopbarPlus/tree/main)
 
 Even though most of them are not even finished yet, it is a good first approach to those methods.
 
